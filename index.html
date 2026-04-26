@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slotify — Smart Appointment Booking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#home" class="nav-logo" onclick="showSection('home')">
+        <span class="logo-dot"></span>Slotify
+      </a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home" class="nav-link active" data-section="home" onclick="showSection('home')">Home</a></li>
+        <li><a href="#slots" class="nav-link" data-section="slots" onclick="showSection('slots')">Book Appointment</a></li>
+        <li><a href="#my-bookings" class="nav-link" data-section="my-bookings" onclick="showSection('my-bookings')">My Bookings</a></li>
+        <li><a href="#admin" class="nav-link" data-section="admin" onclick="showSection('admin')">Admin Panel</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="btn-primary" onclick="showToast('Login feature coming soon!', 'info')">Login / Sign Up</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="bookingModal">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div class="modal-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <h2 class="modal-title">Confirm Booking</h2>
+      <p class="modal-subtitle">You're about to book the following slot</p>
+      <div class="modal-slot-info" id="modalSlotInfo"></div>
+      <div class="modal-name-field">
+        <label for="bookingName">Your Name</label>
+        <input type="text" id="bookingName" placeholder="Enter your name" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="confirmBooking()">Confirm Booking</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HOME SECTION ===== -->
+  <section id="home" class="section active">
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-badge">✦ Smart Scheduling, Simplified</div>
+      <h1 class="hero-title">Book Appointments<br /><em>Seamlessly</em></h1>
+      <p class="hero-sub">Manage your time efficiently with real-time slot booking.<br />No double bookings. No confusion. Just clarity.</p>
+      <div class="hero-btns">
+        <button class="btn-primary btn-lg" onclick="showSection('slots')">View Slots</button>
+        <button class="btn-outline btn-lg" onclick="showSection('admin')">Get Started</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num" id="totalSlotsCount">0</span><span class="stat-label">Total Slots</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num" id="availableSlotsCount">0</span><span class="stat-label">Available</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><span class="stat-num" id="bookedSlotsCount">0</span><span class="stat-label">Booked</span></div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="features-section">
+      <h2 class="section-heading">Why Slotify?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:var(--accent-soft)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>No Double Booking</h3>
+          <p>Our system ensures each slot is booked once. Real-time state updates prevent conflicts.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:var(--teal-soft)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3>Real-Time Availability</h3>
+          <p>See live slot availability with colour-coded status indicators. Green means go.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:var(--amber-soft)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <h3>Easy Cancellations</h3>
+          <p>Cancel any booking with one click. The slot is instantly freed for others.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:var(--rose-soft)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <h3>Admin Controls</h3>
+          <p>Generate bulk time slots in seconds. Full control over your schedule, your way.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLOTS SECTION ===== -->
+  <section id="slots" class="section">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Available Time Slots</h1>
+        <p class="page-sub">Choose a slot and book your appointment</p>
+      </div>
+      <div class="slots-controls">
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="slotSearch" placeholder="Search date…" oninput="renderSlots()" />
+        </div>
+        <input type="date" id="slotDateFilter" class="date-filter" onchange="renderSlots()" />
+        <button class="btn-outline btn-sm" onclick="clearFilters()">Clear</button>
+      </div>
+    </div>
+
+    <div class="filter-tabs" id="filterTabs">
+      <button class="filter-tab active" onclick="setFilter('all', this)">All</button>
+      <button class="filter-tab" onclick="setFilter('available', this)">Available</button>
+      <button class="filter-tab" onclick="setFilter('booked', this)">Booked</button>
+    </div>
+
+    <div class="slots-grid" id="slotsGrid">
+      <!-- Rendered by JS -->
+    </div>
+    <div class="empty-state" id="slotsEmpty" style="display:none">
+      <div class="empty-icon">📅</div>
+      <h3>No slots found</h3>
+      <p>Try adjusting your filters or create slots in the Admin Panel.</p>
+      <button class="btn-primary" onclick="showSection('admin')">Go to Admin Panel</button>
+    </div>
+  </section>
+
+  <!-- ===== MY BOOKINGS SECTION ===== -->
+  <section id="my-bookings" class="section">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">My Appointments</h1>
+        <p class="page-sub">View and manage your booked slots</p>
+      </div>
+    </div>
+    <div class="bookings-list" id="bookingsList"></div>
+    <div class="empty-state" id="bookingsEmpty" style="display:none">
+      <div class="empty-icon">🗓️</div>
+      <h3>No bookings yet</h3>
+      <p>You haven't booked any appointments. Browse available slots to get started.</p>
+      <button class="btn-primary" onclick="showSection('slots')">Browse Slots</button>
+    </div>
+  </section>
+
+  <!-- ===== ADMIN SECTION ===== -->
+  <section id="admin" class="section">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Admin Panel</h1>
+        <p class="page-sub">Create and manage appointment slots</p>
+      </div>
+    </div>
+
+    <div class="admin-layout">
+      <!-- Create Slots -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          </div>
+          <h2>Generate Slots</h2>
+        </div>
+        <div class="form-group">
+          <label>Select Date</label>
+          <input type="date" id="adminDate" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Start Time</label>
+            <input type="time" id="adminStart" value="09:00" />
+          </div>
+          <div class="form-group">
+            <label>End Time</label>
+            <input type="time" id="adminEnd" value="17:00" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Slot Duration</label>
+          <select id="adminDuration">
+            <option value="15">15 minutes</option>
+            <option value="30" selected>30 minutes</option>
+            <option value="45">45 minutes</option>
+            <option value="60">60 minutes</option>
+          </select>
+        </div>
+        <div class="preview-box" id="slotPreview">
+          <p class="preview-hint">Set time range and click Generate to preview slots.</p>
+        </div>
+        <div class="admin-btns">
+          <button class="btn-outline" onclick="previewSlots()">Preview</button>
+          <button class="btn-primary" onclick="generateSlots()">Generate Slots</button>
+        </div>
+      </div>
+
+      <!-- Slot Management -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-icon admin-card-icon--teal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <h2>Slot Overview</h2>
+        </div>
+        <div class="admin-stats">
+          <div class="admin-stat">
+            <span id="adminTotal">0</span>
+            <label>Total</label>
+          </div>
+          <div class="admin-stat admin-stat--green">
+            <span id="adminAvailable">0</span>
+            <label>Available</label>
+          </div>
+          <div class="admin-stat admin-stat--red">
+            <span id="adminBooked">0</span>
+            <label>Booked</label>
+          </div>
+        </div>
+        <div class="admin-slots-list" id="adminSlotsList"></div>
+        <div class="admin-danger-zone">
+          <button class="btn-danger" onclick="clearAllSlots()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+            Clear All Slots
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>Made with ♥ · <strong>Slotify</strong> · Smart Appointment Booking</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
